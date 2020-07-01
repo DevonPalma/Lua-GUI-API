@@ -3,16 +3,14 @@ local MetaUtils = require("GUIAPI/utils/MetaUtils")
 local UDim, UDim_meta = MetaUtils.newSelfIndexedMetatable()
 local UDim_objMeta = MetaUtils.newSelfIndexedTable()
 
+local function new_scale_offset(s, o)
+  local obj = {}
+  setmetatable(obj, UDim_objMeta)
 
--- Constructor --
-local function new_scale_offset(scale, offset)
-  local newUDim = {}
-  setmetatable(newUDim, UDim_objMeta)
+  obj.scale = s
+  obj.offset = o
 
-  newUDim.scale = scale
-  newUDim.offset = offset
-
-  return newUDim
+  return obj
 end
 
 function UDim_meta.new(...)
@@ -28,58 +26,40 @@ function UDim_meta.new(...)
     error("Invalid number of args " .. #args)
   end
 end
-
 UDim_meta.__call = MetaUtils.static(UDim_meta.new)
 
--- End Constructor --
-
-
--- Adding UDims
-function UDim_meta.add(UDimA, UDimB, UDimT)
-  if UDimT == nil then
-    return UDim_meta.add(UDimA, UDimB, UDim.new())
+function UDim_meta.add(obj, obj2, target)
+  if target == nil then
+    return UDim_meta.add(obj, obj2, UDim.new())
   end
 
-  UDimT.scale = UDimA.scale + UDimB.scale
-  UDimT.offset = UDimA.offset + UDimB.offset
+  target.scale = obj.scale + obj2.scale
+  target.offset = obj.offset + obj2.offset
 
-  return UDimT
+  return target
 end
-
 UDim_objMeta.__add = UDim_meta.add
 
-
--- Subtracting UDims
-function UDim_meta.sub(UDimA, UDimB, TargetUDim)
-  if TargetUDim == nil then
-    return UDim_meta.sub(UDimA, UDimB, UDim.new())
+function UDim_meta.sub(obj, obj2, target)
+  if target == nil then
+    return UDim_meta.sub(obj, obj2, UDim.new())
   end
 
-  TargetUDim.scale = UDimA.scale - UDimB.scale
-  TargetUDim.offset = UDimA.offset - UDimB.offset
+  target.scale = obj.scale - obj2.scale
+  target.offset = obj.offset - obj2.offset
 
-  return TargetUDim
+  return target
 end
-
 UDim_objMeta.__sub = UDim_meta.sub
 
-
--- Checking if UDims are equal
-function UDim_meta.equal(UDimA, UDimB)
-  return UDimA.scale == UDimB.scale and UDimA.offset == UDimB.offset
+function UDim_meta.equal(obj, obj2)
+  return obj.scale == obj2.scale and obj.offset == obj2.offset
 end
-
 UDim_objMeta.__eq = UDim_meta.equal
 
-
-
--- convert UDim to a string
-function UDim_meta.tostring(UDimA)
-  return UDimA.scale .. ", " .. UDimA.offset
+function UDim_meta.tostring(obj)
+  return obj.scale .. ", " .. obj.offset
 end
-
 UDim_objMeta.__tostring = UDim_meta.tostring
-
-
 
 return UDim

@@ -1,70 +1,57 @@
 local MU = {}
 
+function MU.newSelfIndexedTable(t)
+  t = t or {}
+  t.__index = t
+  return t
+end
 
--- creates a new table that __index's itself
-function MU.newSelfIndexedTable(table)
-  table = table or {}
-  table.__index = table
-  return table
+function MU.newMetatable(t, o)
+  if t == nil then
+    t = {}
+    return t, MU.newMetatable(t)
+  end
+
+  local meta = getmetatable(table)
+
+  if meta == nil or o then
+    meta = {}
+    setmetatable(table, meta)
+  end
+
+  return meta
+end
+
+function MU.newSelfIndexedMetatable(t, o)
+  if t == nil then
+    t = {}
+    return t, MU.newSelfIndexedMetatable(t)
+  end
+  local meta = MU.newMetatable(t, o)
+  meta = MU.newSelfIndexedTable(meta)
+  return meta
 end
 
 
--- Creates a new metatable for table arg
--- if table-arg is nil then creates a new table and returns it and its meta
--- if override is true then override any existing metatable
--- returns the new metatable (or if table-arg is nil returns table, metatable)
-function MU.newMetatable(table, override)
-  if table == nil then
-    local newTable = {}
-    return newTable, MU.newMetatable(newTable)
+function MU.metatableToMetatable(t, m, o)
+  local meta = getmetatable(t)
+  if meta == nil then
+    meta = {}
+    setmetatable(table, meta)
   end
 
-  local curMeta = getmetatable(table)
-
-  if curMeta == nil or override then
-    curMeta = {}
-    setmetatable(table, curMeta)
-  end
-
-  return curMeta
-end
-
--- Creates a new metatable that __index's itself
--- if table-arg is nil then creates a new table and returns it and its meta
--- if override is true then override any existing metatable
--- returns the new metatable (or if table-arg is nil returns table, metatable)
-function MU.newSelfIndexedMetatable(table, override)
-  if table == nil then
-    local newTable = {}
-    return newTable, MU.newSelfIndexedMetatable(newTable)
-  end
-  local curMeta = MU.newMetatable(table, override)
-  curMeta = MU.newSelfIndexedTable(curMeta)
-  return curMeta
-end
-
-
-function MU.metatableToMetatable(table, metatable, override)
-  local tableMeta = getmetatable(table)
-  if tableMeta == nil then
-    tableMeta = {}
-    setmetatable(table, tableMeta)
-  end
-
-  for index, data in pairs(metatable) do
-    local curDat = tableMeta[index];
-    if curDat == nil or override then
-      tableMeta[index] = data
+  for i, data in pairs(m) do
+    local curDat = meta[i];
+    if curDat == nil or o then
+      meta[i] = data
     end
   end
 
   return table
 end
 
--- A function wrapper to remove the first arg from a function
--- Usually used for __call to make it static
 function MU.static(func)
-  return function(self, ...) return func(...) end
+  return function(_, ...) return func(...) end
 end
 
 

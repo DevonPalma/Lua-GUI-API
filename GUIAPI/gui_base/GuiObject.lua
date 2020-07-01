@@ -5,25 +5,21 @@ local MetaUtils = require "GUIAPI/utils/MetaUtils"
 local Vector2 = require "GUIAPI/datatype/Vector2"
 local UDim2 = require "GUIAPI/datatype/UDim2"
 
-
-
-
 local GuiObject, GuiObject_meta = MetaUtils.newSelfIndexedMetatable()
 local GuiObject_objMeta = MetaUtils.newSelfIndexedTable()
 
-
 function GuiObject_meta.new()
-  local newObject = GB2D.new()
-  newObject:subType(GuiObject_objMeta, "GuiObject")
+  local obj = GB2D.new()
+  obj:subType(GuiObject_objMeta, "GuiObject")
 
-  newObject.active = true
-  newObject.anchorPoint = Vector2()
-  newObject.position = UDim2()
-  newObject.size = UDim2()
-  newObject.visible = true
-  newObject.ZIndex = 0
+  obj.active = true
+  obj.anchorPoint = Vector2()
+  obj.position = UDim2()
+  obj.size = UDim2()
+  obj.visible = true
+  obj.ZIndex = 0
 
-  return newObject
+  return obj
 end
 
 local vec0 = Vector2()
@@ -55,7 +51,6 @@ function GuiObject_meta.update(obj)
     ) + obj.position:getOffsetVector() - anchorOffset + pPos
   end
 
-  -- Super function call
   GB2D.update(obj)
 
   if needsUpdate then

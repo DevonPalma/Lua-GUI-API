@@ -28,10 +28,10 @@ end
 Vector2_meta.__call = MetaUtils.static(Vector2_meta.new)
 
 
-function Vector2_meta.lerp(V2A, V2B, alpha)
+function Vector2_meta.lerp(V2A, V2B, a)
   return new_fromCoord(
-    lerp(V2A.x, V2B.x, alpha),
-    lerp(V2A.y, V2B.y, alpha)
+    lerp(V2A.x, V2B.x, a),
+    lerp(V2A.y, V2B.y, a)
   )
 end
 Vector2_objMeta.lerp = Vector2_meta.lerp
@@ -75,18 +75,18 @@ local function vector_mult_vector(V2A, V2B)
     V2A.y * V2B.y
   )
 end
-local function vector_mult_scalar(V2A, scalar)
+local function vector_mult_scalar(V2A, v)
   return new_fromCoord(
-    V2A.x * scalar,
-    V2A.y * scalar
+    V2A.x * v,
+    V2A.y * v
   )
 end
 
-function Vector2_meta.mult(V2A, multer)
-  if type(multer) == "number" then
-    return vector_mult_scalar(V2A, multer)
-  elseif type(multer) == "table" then
-    return vector_mult_vector(V2A, multer)
+function Vector2_meta.mult(V2A, v)
+  if type(v) == "number" then
+    return vector_mult_scalar(V2A, v)
+  elseif type(v) == "table" then
+    return vector_mult_vector(V2A, v)
   end
 end
 Vector2_objMeta.mult = Vector2_meta.mult
@@ -99,18 +99,18 @@ local function vector_div_vector(V2A, V2B)
     V2A.y / V2B.y
   )
 end
-local function vector_div_scalar(V2A, scalar)
+local function vector_div_scalar(V2A, v)
   return new_fromCoord(
-    V2A.x / scalar,
-    V2A.y / scalar
+    V2A.x / v,
+    V2A.y / v
   )
 end
 
-function Vector2_meta.div(V2A, divisor)
-  if type(divisor) == "number" then
-    return vector_div_scalar(V2A, divisor)
-  elseif type(divisor) == "table" then
-    return vector_div_vector(V2A, divisor)
+function Vector2_meta.div(V2A, v)
+  if type(v) == "number" then
+    return vector_div_scalar(V2A, v)
+  elseif type(v) == "table" then
+    return vector_div_vector(V2A, v)
   end
 end
 Vector2_objMeta.div = Vector2_meta.div
@@ -138,15 +138,15 @@ end
 Vector2_objMeta.floor = Vector2_meta.floor
 
 
-function Vector2_meta.round(V2A, precision)
-  if precision == nil or precision == 0 then
+function Vector2_meta.round(V2A, v)
+  if v == nil or v == 0 then
     return Vector2(
       MathUtils.round(V2A.x),
       MathUtils.round(V2A.y)
     )
   end
 
-  local scale = math.exp(10, precision)
+  local scale = math.exp(10, v)
   return Vector2_meta.floor(V2A * scale) / scale
 end
 Vector2_objMeta.round = Vector2_meta.round
