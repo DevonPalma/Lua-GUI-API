@@ -84,8 +84,8 @@ function UDim2_meta.lerp(UDim2A, UDim2B, alpha, UDim2T)
     UDim2_meta.lerp(UDim2A, UDim2B, alpha, UDim2_meta.new())
   end
 
-  lerp_UDim(UDim2A.x, UDim2B.x, UDim2T.x)
-  lerp_UDim(UDim2A.y, UDim2B.y, UDim2T.y)
+  lerp_UDim(UDim2A.x, UDim2B.x, alpha, UDim2T.x)
+  lerp_UDim(UDim2A.y, UDim2B.y, alpha, UDim2T.y)
 
   return UDim2T
 end
